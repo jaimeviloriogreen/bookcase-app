@@ -123,12 +123,11 @@ const setBook = async ()=>{
 const getPage = async (count, post)=>{
     const choices = [];
 
-    const {len, posts, pages} = setPostByPages(count, post);
+    const { pages } = setPostByPages(count, post);
 
     for(let i = 1; i <= pages; i++){
         choices.push({value:`${i}`, name:`Page ${i}`})
     }
-    
     const question = {
         type:"list",
         name:"page",
@@ -144,7 +143,7 @@ const getSettings = async ()=>{
         {
             type:'list',
             message:'Select how many books by pages you want to show...',
-            name:'getPostPages',
+            name:'post',
             choices:[
                 {value:5, name:"5"},
                 {value:10, name:"10"},
@@ -153,20 +152,20 @@ const getSettings = async ()=>{
         },
         {
             type: 'list',
-            name: 'getSortBy',
+            name: 'sortby',
             message: 'Sort results by...',
             choices:[
-                {value:"name", name:"Book name"},
+                {value:"book", name:"Book name"},
                 {value:"author", name:"Book authors"}
             ]
         },
         {
             type: 'list',
-            name: 'getSortOrder',
+            name: 'orderby',
             message: 'Sort results order by...',
             choices:[
-                {value:1, name:"Ascending"},
-                {value:-1, name:"Descending"}
+                {value:'ASC', name:"Ascending"},
+                {value:'DESC', name:"Descending"}
             ]
         },
         {
@@ -182,6 +181,5 @@ const getSettings = async ()=>{
     const settings = await inquirer.prompt(question);
     return settings;
 }
-
 
 export{getChoice, setBook, getPage, getSettings}

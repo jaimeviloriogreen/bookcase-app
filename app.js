@@ -1,7 +1,13 @@
 import { Books } from "./models/Books.js";
-import { getBooks, insertBook } from "./helpers/bookcase.js";
+import { 
+    getBooks, 
+    insertBook, 
+    rowsCount, 
+    getSets, 
+    updateSettins 
+} from "./helpers/bookcase.js";
 import advise from "./modules/messages.js";
-import pagination from "./modules/pages.js";
+import setPostByPages from "./modules/pages.js";
 import {getChoice, setBook, getPage, getSettings} from "./helpers/inquirer.js";
 
 async function main(){
@@ -14,16 +20,17 @@ async function main(){
     switch (option) {
         case "1":
             console.clear();
-        
             try {
-                
-                console.log(pages);
-                const books = await getBooks();
+                const { rows }  = await rowsCount();
+                const {post, sortby, orderby} = await getSets();
+                const pages = await getPage(rows, post);
+                const {posts, len} = setPostByPages(rows, post, pages);
+            
+                const books = await getBooks(orderby, sortby, len, posts);
                 console.table(books);
             } catch (err) {
                 console.log(`Error: ${ err }`);
             }
-            
             break;
         case "2":
             console.clear();
@@ -51,7 +58,23 @@ async function main(){
             break;
         case "5":
             console.clear();
+            try {
+                const {post, sortby, orderby, confirmation} = await getSettings();
+                console.log(post, sortby, orderby, confirmation);
 
+                if(confirmation){
+                    const updated = await updateSettins(post, sortby, orderby);
+                    
+                    if(updated === 1){
+                        advise("Set updated!", "green");
+                    }
+                    break;
+                }
+
+            } catch (err) {
+                console.log(`Error: ${ err }`);
+            }
+            advise("Nothing have been set!", "green");
             break;
         default:
             break;
@@ -62,7 +85,7 @@ async function main(){
     advise('Session end!', "red");
 }
 
-// main();
+main();
 
 
 

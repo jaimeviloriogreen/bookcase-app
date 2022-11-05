@@ -1,8 +1,11 @@
 import sqlite3 from "sqlite3";
 
 
-export const getBooks = ()=>{
+export const getBooks = (sortby, orderby, len, posts)=>{
     return new Promise((resolve,reject)=>{
+
+        console.log(len, posts);
+
         const db = new sqlite3.Database("./database/bookcase.db");
         const sql =`
                 SELECT 
@@ -12,7 +15,8 @@ export const getBooks = ()=>{
                     purchasedOn
                 FROM books
                     INNER JOIN authors ON books.author = authors.id
-                    INNER JOIN categories ON books.category = categories.id`;
+                    INNER JOIN categories ON books.category = categories.id
+                    ORDER BY ${orderby} ${sortby} LIMIT ${len - posts} OFFSET ${posts }`;
         db.all(sql, (err, rows)=>{
             if( err ) return reject(err.message);
             resolve(rows);
@@ -21,8 +25,6 @@ export const getBooks = ()=>{
         db.close();
     }); 
 }
-
-
 export const insertBook = (name, authors, editorial, categories, isbn, purchasedOn)=>{
     return new Promise((resolve, reject)=>{
         
@@ -70,5 +72,45 @@ export const insertBook = (name, authors, editorial, categories, isbn, purchased
 
         });
 
+    });
+}
+
+export const rowsCount = ()=>{
+    return new Promise((resolve, reject)=>{
+        const sql = "SELECT COUNT(*) AS 'rows' FROM books;"
+        const db = new sqlite3.Database("./database/bookcase.db");
+
+        db.get(sql, (err, row)=>{
+            if( err ) return reject(err.message);
+            resolve(row);
+        });
+
+         db.close();
+    });
+}
+
+export const getSets = ()=>{
+    return new Promise((resolve, reject)=>{
+        const sql = "SELECT post, sortby, orderby FROM settings;"
+        const db = new sqlite3.Database("./database/bookcase.db");
+
+        db.get(sql, (err, row)=>{
+            if( err ) return reject(err.message);
+            resolve(row);
+        });
+
+         db.close();
+    });
+}
+
+export const updateSettins = async(post, sortby, orderby)=>{
+    return new Promise((resolve, reject)=>{
+        const db = new sqlite3.Database("./database/bookcase.db");
+        const sql = `UPDATE settings SET post = ?, sortby = ?, orderby = ? WHERE id = 1;`;
+        const values = [post, sortby, orderby]
+        db.run(sql,values, function(err){
+            if( err ) return  reject(err.message);
+            resolve(this.changes);
+        });
     });
 }
