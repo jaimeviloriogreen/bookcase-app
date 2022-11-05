@@ -1,10 +1,7 @@
 import sqlite3 from "sqlite3";
 
-
 export const getBooks = (sortby, orderby, len, posts)=>{
     return new Promise((resolve,reject)=>{
-
-        console.log(len, posts);
 
         const db = new sqlite3.Database("./database/bookcase.db");
         const sql =`
