@@ -1,7 +1,7 @@
 /** 
     SQLite3 Database 
  **/
-
+PRAGMA foreign_keys = ON;
 # Delete table Categories  if exist 
 DROP TABLE categories;
 #Create table Categories  
@@ -26,7 +26,16 @@ CREATE TABLE
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
     );
-
+# Delete table settings if exist
+DROP TABLE editorials;
+#Create table settings 
+CREATE TABLE
+    settings(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        post INTEGER NOT NULL,
+        sortby TEXT NOT NULL,
+        orderby TEXT NOT NULL
+    );
 # Delete table Book if exist 
 DROP TABLE books;
 #Create table Book
@@ -36,9 +45,15 @@ CREATE TABLE
         name TEXT NOT NULL,
         isbn TEXT NOT NULL,
         purchasedOn TEXT NOT NULL,
-        category INTEGER REFERENCES categories(id),
-        author INTEGER REFERENCES authors(id),
+        category INTEGER REFERENCES categories(id) 
+            ON UPDATE CASCADE
+            ON DELETE CASCADE,
+        author INTEGER REFERENCES authors(id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE,
         editorial INTEGER REFERENCES editorials(id)
+            ON UPDATE CASCADE
+            ON DELETE CASCADE
     );
 
 # Insert Book

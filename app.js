@@ -2,7 +2,8 @@ import { Books } from "./models/Books.js";
 import { 
     getBooks, 
     insertBook, 
-    rowsCount, 
+    rowsCount,
+    startSettings, 
     getSets, 
     updateSettins 
 } from "./helpers/bookcase.js";
@@ -11,12 +12,15 @@ import setPostByPages from "./modules/pages.js";
 import {getChoice, setBook, getPage, getSettings} from "./helpers/inquirer.js";
 
 async function main(){
+    await startSettings();
+    
     advise("Welcome to my personal bookcase @pp!", "yellow");
 
     let option = "";
 
     do{
         option = await getChoice();
+        
     switch (option) {
         case "1":
             console.clear();
@@ -29,15 +33,12 @@ async function main(){
                 const books = await getBooks(orderby, sortby, len, posts);
                 console.table(books);
             } catch (err) {
-                console.log(`Error: ${ err }`);
+                advise(`Error: nothing to show!`, "red");
             }
             break;
         case "2":
             console.clear();
             const { name, authors, editorial, categories, isbn, date, confirm } = await setBook();
-
-
-            console.log(name, authors, editorial, categories, isbn, date, confirm );
             
             if( confirm ){
                 try {
@@ -60,7 +61,6 @@ async function main(){
             console.clear();
             try {
                 const {post, sortby, orderby, confirmation} = await getSettings();
-                console.log(post, sortby, orderby, confirmation);
 
                 if(confirmation){
                     const updated = await updateSettins(post, sortby, orderby);

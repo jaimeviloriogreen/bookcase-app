@@ -85,7 +85,23 @@ export const rowsCount = ()=>{
          db.close();
     });
 }
+export const startSettings = ()=>{
+    return new Promise((resolve, reject)=>{
+        const sql =`
+            INSERT INTO settings(post, sortby, orderby) 
+            SELECT 5, 'book', 'ASC' 
+            WHERE NOT EXISTS (SELECT * FROM settings)
+        `;
+        const db = new sqlite3.Database("./database/bookcase.db");
 
+        db.get(sql, function(err, row){
+            if( err ) return reject(err.message);
+            resolve(row);
+        });
+
+         db.close();
+    });
+}
 export const getSets = ()=>{
     return new Promise((resolve, reject)=>{
         const sql = "SELECT post, sortby, orderby FROM settings;"
