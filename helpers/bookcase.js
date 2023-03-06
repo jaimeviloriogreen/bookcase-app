@@ -5,7 +5,7 @@ export const getBooks = (sortby, orderby, len, posts)=>{
 
         const db = new sqlite3.Database("./database/bookcase.db");
         const sql =`
-                SELECT 
+                SELECT
                     books.name AS book,
                     authors.name AS author,
                     categories.name AS categories,
@@ -71,7 +71,6 @@ export const insertBook = (name, authors, editorial, categories, isbn, purchased
 
     });
 }
-
 export const rowsCount = ()=>{
     return new Promise((resolve, reject)=>{
         const sql = "SELECT COUNT(*) AS 'rows' FROM books;"
@@ -115,7 +114,6 @@ export const getSets = ()=>{
          db.close();
     });
 }
-
 export const updateSettins = async(post, sortby, orderby)=>{
     return new Promise((resolve, reject)=>{
         const db = new sqlite3.Database("./database/bookcase.db");
@@ -126,4 +124,24 @@ export const updateSettins = async(post, sortby, orderby)=>{
             resolve(this.changes);
         });
     });
+}
+
+export const getBooksToDelete = ()=>{
+    return new Promise((resolve,reject)=>{
+        
+        const db = new sqlite3.Database("./database/bookcase.db");
+        const sql =`
+                SELECT
+                    books.id,
+                    books.name AS book,
+                    authors.name AS author
+                FROM books
+                    INNER JOIN authors ON books.author = authors.id`;
+        db.all(sql, (err, rows)=>{
+            if( err ) return reject(err.message);
+            resolve(rows);
+        });
+
+        db.close();
+    }); 
 }

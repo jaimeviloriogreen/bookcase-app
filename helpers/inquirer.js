@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
 import setPostByPages from "../modules/pages.js";
+import { getBooksToDelete } from "./bookcase.js";
 
 import "colors";
 const getChoice = async ()=>{
@@ -182,4 +183,38 @@ const getSettings = async ()=>{
     return settings;
 }
 
-export{getChoice, setBook, getPage, getSettings}
+const toDeleteChoices = async()=>{
+    const bookToChoice = await getBooksToDelete();
+    const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book} - ${author}`}));
+    
+    const question = [
+        {
+            type:"checkbox",
+            name:"books",
+            message:"Choice the book(s) to delete!",
+            choices:[
+                new inquirer.Separator(' ==== Delete one o more books ==== '.green),
+                ...bookChoices
+            ],
+            validate(answer){
+                if (answer.length < 1) {
+                    return 'You must choose at least one book!'.red;
+                }
+
+                return true;
+            }
+        },
+        {
+            type:"confirm", 
+            name:"confirm",
+            message:"¿Are you sure?".green,
+            default(){
+                return true;
+            }
+        },
+    ]
+               
+    return await inquirer.prompt(question);
+}
+
+export{getChoice, setBook, getPage, getSettings, toDeleteChoices}

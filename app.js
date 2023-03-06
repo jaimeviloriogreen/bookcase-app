@@ -5,11 +5,11 @@ import {
     rowsCount,
     startSettings, 
     getSets, 
-    updateSettins 
+    updateSettins
 } from "./helpers/bookcase.js";
 import advise from "./modules/messages.js";
 import setPostByPages from "./modules/pages.js";
-import {getChoice, setBook, getPage, getSettings} from "./helpers/inquirer.js";
+import {getChoice, setBook, getPage, getSettings, toDeleteChoices} from "./helpers/inquirer.js";
 
 async function main(){
     await startSettings();
@@ -20,6 +20,7 @@ async function main(){
 
     do{
         option = await getChoice();
+       
         
     switch (option) {
         case "1":
@@ -29,9 +30,10 @@ async function main(){
                 const {post, sortby, orderby} = await getSets();
                 const pages = await getPage(rows, post);
                 const {posts, len} = setPostByPages(rows, post, pages);
-            
-                const books = await getBooks(orderby, sortby, len, posts);
+                const books = await getBooks(orderby, sortby, len, posts);                
+                
                 console.table(books);
+
             } catch (err) {
                 advise(`Error: nothing to show!`, "red");
             }
@@ -56,6 +58,17 @@ async function main(){
                 }
             }
                     advise("Book have not been inserted!", "green");
+            break;
+        case "4":
+            console.clear();
+
+            try {
+                const {books, confirm} = await toDeleteChoices();
+                console.log(books, confirm);
+
+            } catch (err) {
+                advise(`Error: nothing to show!`, "red");
+            }
             break;
         case "5":
             console.clear();
