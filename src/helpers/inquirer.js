@@ -4,7 +4,6 @@ import { getBooksToDelete } from "./bookcase.js";
 
 import "colors";
 const getChoice = async ()=>{
-    
     const question = {
         type:"list",
         name:"choice",

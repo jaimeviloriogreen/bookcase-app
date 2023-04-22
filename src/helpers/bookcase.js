@@ -1,9 +1,9 @@
 import sqlite3 from "sqlite3";
 
-export const getBooks = (sortby, orderby, len, posts)=>{
+const getBooks = (sortby, orderby, len, posts)=>{
     return new Promise((resolve,reject)=>{
 
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
         const sql =`
                 SELECT
                     books.name AS book,
@@ -22,10 +22,10 @@ export const getBooks = (sortby, orderby, len, posts)=>{
         db.close();
     }); 
 }
-export const insertBook = (name, authors, editorial, categories, isbn, purchasedOn)=>{
+const insertBook = (name, authors, editorial, categories, isbn, purchasedOn)=>{
     return new Promise((resolve, reject)=>{
         
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
         
         db.serialize(()=>{
             db.run(`
@@ -71,10 +71,10 @@ export const insertBook = (name, authors, editorial, categories, isbn, purchased
 
     });
 }
-export const rowsCount = ()=>{
+const rowsCount = ()=>{
     return new Promise((resolve, reject)=>{
         const sql = "SELECT COUNT(*) AS 'rows' FROM books;"
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
 
         db.get(sql, (err, row)=>{
             if( err ) return reject(err.message);
@@ -84,14 +84,14 @@ export const rowsCount = ()=>{
          db.close();
     });
 }
-export const startSettings = ()=>{
+const startSettings = ()=>{
     return new Promise((resolve, reject)=>{
         const sql =`
             INSERT INTO settings(post, sortby, orderby) 
             SELECT 5, 'book', 'ASC' 
             WHERE NOT EXISTS (SELECT * FROM settings)
         `;
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
 
         db.get(sql, function(err, row){
             if( err ) return reject(err.message);
@@ -101,10 +101,13 @@ export const startSettings = ()=>{
          db.close();
     });
 }
-export const getSets = ()=>{
+const getSets = ()=>{
     return new Promise((resolve, reject)=>{
+        // Create table settings before select fields
+        startSettings();
+
         const sql = "SELECT post, sortby, orderby FROM settings;"
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
 
         db.get(sql, (err, row)=>{
             if( err ) return reject(err.message);
@@ -114,9 +117,9 @@ export const getSets = ()=>{
          db.close();
     });
 }
-export const updateSettins = async(post, sortby, orderby)=>{
+const updateSettins = async(post, sortby, orderby)=>{
     return new Promise((resolve, reject)=>{
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
         const sql = `UPDATE settings SET post = ?, sortby = ?, orderby = ? WHERE id = 1;`;
         const values = [post, sortby, orderby]
         db.run(sql,values, function(err){
@@ -125,11 +128,10 @@ export const updateSettins = async(post, sortby, orderby)=>{
         });
     });
 }
-
-export const getBooksToDelete = ()=>{
+const getBooksToDelete = ()=>{
     return new Promise((resolve,reject)=>{
         
-        const db = new sqlite3.Database("./database/bookcase.db");
+        const db = new sqlite3.Database("./src/database/bookcase.db");
         const sql =`
                 SELECT
                     books.id,
@@ -144,4 +146,99 @@ export const getBooksToDelete = ()=>{
 
         db.close();
     }); 
+}
+const createDB = ()=>{
+    return new Promise((resolve, reject)=>{
+        const path = "./src/database/bookcase.db";
+
+        const db = new sqlite3.Database(path, (err)=>{
+            if( err ) return reject(err.message);
+        });
+        resolve(db);
+    });
+};
+const createTable = async ()=>{
+    return new Promise((resolve, reject)=>{
+        const db = new sqlite3.Database("./src/database/bookcase.db");
+        const categoriesTableSQL = `
+        CREATE TABLE IF NOT EXISTS
+        categories(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+        );`;
+        const authorsTableSQL = `
+        CREATE TABLE IF NOT EXISTS
+        authors(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+        );`;
+        const editorialTableSQL = `
+        CREATE TABLE IF NOT EXISTS
+        editorials(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL
+        );`;
+        const settingsTableSQL = `
+        CREATE TABLE IF NOT EXISTS
+        settings(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            post INTEGER NOT NULL,
+            sortby TEXT NOT NULL,
+            orderby TEXT NOT NULL
+        );`;
+        const booksTableSQL = `
+        CREATE TABLE IF NOT EXISTS
+        books(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            isbn TEXT NOT NULL,
+            purchasedOn TEXT NOT NULL,
+            category INTEGER REFERENCES categories(id) 
+                ON UPDATE CASCADE
+                ON DELETE CASCADE,
+            author INTEGER REFERENCES authors(id)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE,
+            editorial INTEGER REFERENCES editorials(id)
+                ON UPDATE CASCADE
+                ON DELETE CASCADE
+        );
+        `;
+
+        db.serialize(()=>{
+            db.run("PRAGMA foreign_keys = ON;", (err)=>{
+                if( err ) return reject(err.message);
+            });
+            db.run(categoriesTableSQL, (err)=>{
+                 if( err ) return reject(err.message);
+            });
+            db.run(authorsTableSQL, (err)=>{
+                if( err ) return reject(err.message);
+            });
+            db.run(editorialTableSQL, (err)=>{
+                if( err ) return reject(err.message);
+            });
+            db.run(settingsTableSQL, (err)=>{
+                if( err ) return reject(err.message);
+            });
+            db.run(booksTableSQL, (err)=>{
+                if( err ) return reject(err.message);
+            });
+            db.close(err =>{
+                if( err ) return reject(err.message);
+            });
+            
+            resolve("tables created!");
+        });
+    });
+};
+export{
+    getBooks,
+    insertBook,
+    rowsCount,
+    getSets,
+    updateSettins,
+    getBooksToDelete,
+    createDB,
+    createTable
 }

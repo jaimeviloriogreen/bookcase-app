@@ -5,7 +5,7 @@ PRAGMA foreign_keys = ON;
 # Delete table Categories  if exist 
 DROP TABLE categories;
 #Create table Categories  
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     categories(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
@@ -13,7 +13,7 @@ CREATE TABLE
 # Delete table Authors if exist 
 DROP TABLE authors;
 #Create table Authors  
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     authors(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
@@ -21,7 +21,7 @@ CREATE TABLE
 # Delete table Editorials if exist 
 DROP TABLE editorials;
 #Create table Editorials  
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     editorials(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
@@ -29,7 +29,7 @@ CREATE TABLE
 # Delete table settings if exist
 DROP TABLE editorials;
 #Create table settings 
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     settings(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         post INTEGER NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE
 # Delete table Book if exist 
 DROP TABLE books;
 #Create table Book
-CREATE TABLE
+CREATE TABLE IF NOT EXISTS
     books(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
