@@ -183,6 +183,7 @@ const getSettings = async ()=>{
 }
 
 const toDeleteChoices = async()=>{
+    
     const bookToChoice = await getBooksToDelete();
     const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book} - ${author}`}));
     

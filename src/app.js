@@ -3,7 +3,8 @@ import advise from "./modules/messages.js";
 import setPostByPages from "./modules/pages.js";
 import { 
     getBooks, 
-    insertBook, 
+    insertBook,
+    deleteBooks, 
     rowsCount,
     getSets, 
     updateSettins,
@@ -76,8 +77,17 @@ async function main(){
                         if( rows <= 0 ) throw new Error("nothing to delete!");
 
                         const { books, confirm } = await toDeleteChoices();
-                        console.log(books, confirm);
-
+                        
+                        if(confirm){
+                            const deleted = await deleteBooks(books);
+                            
+                            if( deleted  > 0 && deleted < 2) advise(`${deleted} book have been deleted!`, "green");
+                            
+                            if( deleted >= 2) advise(`${deleted} books have been deleted!`, "green");
+                            
+                        }else{
+                            advise("Books have not been deleted!", "green");
+                        }
                     } catch (err) {
                         advise(err, "red");
                     }

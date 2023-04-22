@@ -84,28 +84,8 @@ const rowsCount = ()=>{
          db.close();
     });
 }
-const startSettings = ()=>{
-    return new Promise((resolve, reject)=>{
-        const sql =`
-            INSERT INTO settings(post, sortby, orderby) 
-            SELECT 5, 'book', 'ASC' 
-            WHERE NOT EXISTS (SELECT * FROM settings)
-        `;
-        const db = new sqlite3.Database("./src/database/bookcase.db");
-
-        db.get(sql, function(err, row){
-            if( err ) return reject(err.message);
-            resolve(row);
-        });
-
-         db.close();
-    });
-}
 const getSets = ()=>{
     return new Promise((resolve, reject)=>{
-        // Create table settings before select fields
-        startSettings();
-
         const sql = "SELECT post, sortby, orderby FROM settings;"
         const db = new sqlite3.Database("./src/database/bookcase.db");
 
@@ -186,6 +166,11 @@ const createTable = async ()=>{
             sortby TEXT NOT NULL,
             orderby TEXT NOT NULL
         );`;
+        const settingsInsertSQL = `
+         INSERT INTO settings(post, sortby, orderby) 
+            SELECT 5, 'book', 'ASC' 
+            WHERE NOT EXISTS (SELECT * FROM settings);
+        `;
         const booksTableSQL = `
         CREATE TABLE IF NOT EXISTS
         books(
@@ -209,6 +194,12 @@ const createTable = async ()=>{
             db.run("PRAGMA foreign_keys = ON;", (err)=>{
                 if( err ) return reject(err.message);
             });
+            db.run(settingsTableSQL, (err)=>{
+                if( err ) return reject(err.message);
+            });
+            db.run(settingsInsertSQL, (err)=>{
+                if( err ) return reject(err.message);
+            })
             db.run(categoriesTableSQL, (err)=>{
                  if( err ) return reject(err.message);
             });
@@ -218,20 +209,33 @@ const createTable = async ()=>{
             db.run(editorialTableSQL, (err)=>{
                 if( err ) return reject(err.message);
             });
-            db.run(settingsTableSQL, (err)=>{
-                if( err ) return reject(err.message);
-            });
             db.run(booksTableSQL, (err)=>{
                 if( err ) return reject(err.message);
             });
             db.close(err =>{
                 if( err ) return reject(err.message);
             });
-            
-            resolve("tables created!");
         });
+        resolve("tables created!");
     });
 };
+const deleteBooks = (ids=[])=>{
+    return new Promise((resolve, reject)=>{
+        const db = new sqlite3.Database("./src/database/bookcase.db");
+        
+        let id = ids.map(_=> `?,`).join("").slice(0, -1);
+        
+        const sql = `DELETE FROM books WHERE id IN(${id});`
+        
+        db.run(sql, ids, function(err){
+            if( err ) return reject(err.message);
+            resolve(this.changes);
+        });
+
+        db.close();
+    });
+};
+
 export{
     getBooks,
     insertBook,
@@ -240,5 +244,6 @@ export{
     updateSettins,
     getBooksToDelete,
     createDB,
-    createTable
+    createTable,
+    deleteBooks
 }
