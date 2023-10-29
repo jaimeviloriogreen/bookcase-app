@@ -13,7 +13,7 @@ const getBooks = (sortby, orderby, len, posts)=>{
                 FROM books
                     INNER JOIN authors ON books.author = authors.id
                     INNER JOIN categories ON books.category = categories.id
-                    ORDER BY ${orderby} ${sortby} LIMIT ${len - posts} OFFSET ${posts }`;
+                    ORDER BY ${ orderby } ${ sortby } LIMIT ${ len - posts } OFFSET ${ posts }`;
         db.all(sql, (err, rows)=>{
             if( err ) return reject(err.message);
             resolve(rows);
@@ -97,7 +97,7 @@ const getSets = ()=>{
          db.close();
     });
 }
-const updateSettins = async(post, sortby, orderby)=>{
+const updateSettings = async(post, sortby, orderby)=>{
     return new Promise((resolve, reject)=>{
         const db = new sqlite3.Database("./src/database/bookcase.db");
         const sql = `UPDATE settings SET post = ?, sortby = ?, orderby = ? WHERE id = 1;`;
@@ -108,7 +108,7 @@ const updateSettins = async(post, sortby, orderby)=>{
         });
     });
 }
-const getBooksToDelete = ()=>{
+const getBooksToActions = ()=>{
     return new Promise((resolve,reject)=>{
         
         const db = new sqlite3.Database("./src/database/bookcase.db");
@@ -241,8 +241,8 @@ export{
     insertBook,
     rowsCount,
     getSets,
-    updateSettins,
-    getBooksToDelete,
+    updateSettings,
+    getBooksToActions,
     createDB,
     createTable,
     deleteBooks

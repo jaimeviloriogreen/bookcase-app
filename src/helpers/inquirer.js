@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import setPostByPages from "../modules/pages.js";
-import { getBooksToDelete } from "./bookcase.js";
+import { getBooksToActions } from "./bookcase.js";
 
 import "colors";
 const getChoice = async ()=>{
@@ -184,9 +184,10 @@ const getSettings = async ()=>{
 
 const toDeleteChoices = async()=>{
     
-    const bookToChoice = await getBooksToDelete();
-    const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book} - ${author}`}));
-    
+    const bookToChoice = await getBooksToActions();
+    const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book}, ${author}`}));
+     
+    bookChoices[0].checked = true;
     const question = [
         {
             type:"checkbox",
@@ -217,4 +218,43 @@ const toDeleteChoices = async()=>{
     return await inquirer.prompt(question);
 }
 
-export{getChoice, setBook, getPage, getSettings, toDeleteChoices}
+const toUpdateChoices = async ()=>{
+    const bookToChoice = await getBooksToActions();
+    
+    const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book}, ${author}`}));
+  
+   
+
+    const question = [
+        {
+            type:"list",
+            name:"book",
+            message:"Choice the book to update!",
+            choices:[
+                new inquirer.Separator(' ==== Update a Book ==== '.green),
+                ...bookChoices
+            ],
+            validate(answer){
+                if (answer.length < 1) {
+                    return 'You must choose at least one book!'.red;
+                }
+
+                return true;
+            }
+        },
+        {
+            type:"confirm", 
+            name:"confirm",
+            message:"¿Are you sure?".green,
+            default(){
+                return true;
+            }
+        }
+    ]
+               
+    return await inquirer.prompt(question);
+
+
+}
+
+export{getChoice, setBook, getPage, getSettings, toDeleteChoices, toUpdateChoices}

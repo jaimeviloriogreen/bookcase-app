@@ -7,7 +7,7 @@ import {
     deleteBooks, 
     rowsCount,
     getSets, 
-    updateSettins,
+    updateSettings,
     createDB,
     createTable
 } from "./helpers/bookcase.js";
@@ -16,7 +16,8 @@ import {
     setBook, 
     getPage, 
     getSettings, 
-    toDeleteChoices
+    toDeleteChoices, 
+    toUpdateChoices
 } from "./helpers/inquirer.js";
 
 async function main(){
@@ -31,7 +32,8 @@ async function main(){
         do{
            
             option = await getChoice();
-            
+            const { rows }  = await rowsCount();
+
             switch (option) {
                 case "1":
                     console.clear();
@@ -69,10 +71,21 @@ async function main(){
                     }
                             advise("Book have not been inserted!", "green");
                     break;
+                case "3":
+                     console.clear();
+                    try {
+                        if( rows <= 0 ) throw new Error("nothing to delete!");
+
+                        const res = await toUpdateChoices();
+                        console.log(res);
+                    } catch (err) {
+                        
+                    }
+                    break;
                 case "4":
                     console.clear();
                     try {
-                        const { rows }  = await rowsCount();
+                      
                         
                         if( rows <= 0 ) throw new Error("nothing to delete!");
 
@@ -98,7 +111,7 @@ async function main(){
                         const {post, sortby, orderby, confirmation} = await getSettings();
 
                         if(confirmation){
-                            const updated = await updateSettins(post, sortby, orderby);
+                            const updated = await updateSettings(post, sortby, orderby);
                             
                             if(updated === 1){
                                 advise("Set updated!", "green");
