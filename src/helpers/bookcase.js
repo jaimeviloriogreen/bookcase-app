@@ -30,43 +30,34 @@ const insertBook = (name, authors, editorial, categories, isbn, purchasedOn)=>{
         db.serialize(()=>{
             db.run(`
                 INSERT INTO categories(name)
-                SELECT ?
-                WHERE NOT EXISTS(
-                SELECT name FROM categories WHERE name = ?);
-            `, [categories, categories]);
+                VALUES(?);
+            `, [categories], (err)=>{ if( err ) return reject(err);});
 
              db.run(`
                 INSERT INTO authors(name)
-                SELECT ?
-                WHERE NOT EXISTS(
-                SELECT name FROM authors WHERE name = ?);
-            `, [authors, authors]);
+                VALUES(?);
+            `, [authors],  (err)=>{ if( err ) return reject(err); });
 
              db.run(`
                 INSERT INTO editorials(name)
-                SELECT ?
-                WHERE NOT EXISTS(
-                SELECT name FROM editorials WHERE name = ?);
-            `, [editorial, editorial]);
+                VALUES(?);
+            `, [editorial],  (err)=> { if( err ) return reject(err); });
 
             db.run(`
             INSERT INTO
                 books(name,isbn, purchasedOn,category,author,editorial)
-            VALUES(?, ?,?,
+            VALUES(?, ?, ?,
                 (SELECT id FROM categories WHERE name = ?),
                 (SELECT id FROM authors WHERE name = ?),
                 (SELECT id FROM editorials WHERE name = ?));
             `, [name, isbn, purchasedOn, categories, authors, editorial], 
             function(err){
-                if( err ) return reject(err.message);
+                if( err ) return reject(err);
 
                 resolve(this.changes);
             });
             
-            db.close(err =>{
-                if( err ) return  reject(err.message);
-            });
-
+            db.close(err =>{ if( err ) return  reject(err); });
         });
 
     });
@@ -144,19 +135,19 @@ const createTable = async ()=>{
         CREATE TABLE IF NOT EXISTS
         categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
+            name TEXT NOT NULL UNIQUE
         );`;
         const authorsTableSQL = `
         CREATE TABLE IF NOT EXISTS
         authors(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
+            name TEXT NOT NULL UNIQUE
         );`;
         const editorialTableSQL = `
         CREATE TABLE IF NOT EXISTS
         editorials(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL
+            name TEXT NOT NULL UNIQUE
         );`;
         const settingsTableSQL = `
         CREATE TABLE IF NOT EXISTS
@@ -175,8 +166,8 @@ const createTable = async ()=>{
         CREATE TABLE IF NOT EXISTS
         books(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            isbn TEXT NOT NULL,
+            name TEXT NOT NULL UNIQUE,
+            isbn TEXT NOT NULL UNIQUE,
             purchasedOn TEXT NOT NULL,
             category INTEGER REFERENCES categories(id) 
                 ON UPDATE CASCADE

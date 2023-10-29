@@ -13,7 +13,7 @@ import {
 } from "./helpers/bookcase.js";
 import {
     getChoice, 
-    setBook, 
+    insertBookChoice, 
     getPage, 
     getSettings, 
     toDeleteChoices, 
@@ -52,7 +52,7 @@ async function main(){
                     break;
                 case "2":
                     console.clear();
-                    const { name, authors, editorial, categories, isbn, date, confirm } = await setBook();
+                    const { name, authors, editorial, categories, isbn, date, confirm } = await insertBookChoice();
                     
                     if( confirm ){
                         try {
@@ -74,12 +74,12 @@ async function main(){
                 case "3":
                      console.clear();
                     try {
-                        if( rows <= 0 ) throw new Error("nothing to delete!");
+                        if( rows <= 0 ) throw new Error("nothing to update!");
 
                         const res = await toUpdateChoices();
                         console.log(res);
                     } catch (err) {
-                        
+                        advise(err, "red");
                     }
                     break;
                 case "4":

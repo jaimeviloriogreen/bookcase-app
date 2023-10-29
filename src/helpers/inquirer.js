@@ -12,7 +12,7 @@ const getChoice = async ()=>{
         choices:[
             {value:"1", name:"1. Show all my books"},
             {value:"2", name:"2. Insert new book"},
-            {value:"3", name:"3. Edit a book"},
+            {value:"3", name:"3. Update a book"},
             {value:"4", name:"4. Delete a book"},
             {value:"5", name:"5. Settings"},
             {value:"6", name:"6. Exit"}
@@ -23,7 +23,7 @@ const getChoice = async ()=>{
     return choice;
 }
 
-const setBook = async ()=>{
+const insertBookChoice = async ()=>{
     const question = [
         {
             type:"input", 
@@ -186,8 +186,7 @@ const toDeleteChoices = async()=>{
     
     const bookToChoice = await getBooksToActions();
     const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book}, ${author}`}));
-     
-    bookChoices[0].checked = true;
+    
     const question = [
         {
             type:"checkbox",
@@ -257,4 +256,4 @@ const toUpdateChoices = async ()=>{
 
 }
 
-export{getChoice, setBook, getPage, getSettings, toDeleteChoices, toUpdateChoices}
+export{getChoice, insertBookChoice, getPage, getSettings, toDeleteChoices, toUpdateChoices}
