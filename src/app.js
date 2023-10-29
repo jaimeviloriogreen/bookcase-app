@@ -17,7 +17,8 @@ import {
     getPage, 
     getSettings, 
     toDeleteChoices, 
-    toUpdateChoices
+    toUpdateBookChoice, 
+    toUpdateBookInput
 } from "./helpers/inquirer.js";
 
 async function main(){
@@ -69,15 +70,23 @@ async function main(){
                             advise(`Error: ${ err }`, "red");
                         }
                     }
-                            advise("Book have not been inserted!", "green");
+                            advise("Book have not been inserted!", "yellow");
                     break;
                 case "3":
                      console.clear();
                     try {
                         if( rows <= 0 ) throw new Error("nothing to update!");
 
-                        const res = await toUpdateChoices();
-                        console.log(res);
+                        const { bookId, confirm } = await toUpdateBookChoice();
+                        
+                        if(confirm){
+                            const res = await toUpdateBookInput(bookId);
+                            console.log(res);
+                        }else{
+
+                            advise("Book have not been updated!", "yellow");
+                        }
+
                     } catch (err) {
                         advise(err, "red");
                     }
@@ -99,7 +108,7 @@ async function main(){
                             if( deleted >= 2) advise(`${deleted} books have been deleted!`, "green");
                             
                         }else{
-                            advise("Books have not been deleted!", "green");
+                            advise("Books have not been deleted!", "yellow");
                         }
                     } catch (err) {
                         advise(err, "red");

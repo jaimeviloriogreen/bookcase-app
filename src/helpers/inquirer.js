@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import setPostByPages from "../modules/pages.js";
-import { getBooksToActions } from "./bookcase.js";
+import { getBooksToActions, getOneBook } from "./bookcase.js";
 
 import "colors";
 const getChoice = async ()=>{
@@ -217,18 +217,17 @@ const toDeleteChoices = async()=>{
     return await inquirer.prompt(question);
 }
 
-const toUpdateChoices = async ()=>{
+const toUpdateBookChoice = async ()=>{
     const bookToChoice = await getBooksToActions();
     
     const bookChoices = bookToChoice.map(({id, book, author})=>({value:id, name:`${book}, ${author}`}));
   
-   
-
     const question = [
         {
             type:"list",
-            name:"book",
-            message:"Choice the book to update!",
+            name:"bookId",
+            message:"Choice the book to update! ",
+            suffix:"(press <enter> to select)".yellow,
             choices:[
                 new inquirer.Separator(' ==== Update a Book ==== '.green),
                 ...bookChoices
@@ -252,8 +251,63 @@ const toUpdateChoices = async ()=>{
     ]
                
     return await inquirer.prompt(question);
-
-
 }
 
-export{getChoice, insertBookChoice, getPage, getSettings, toDeleteChoices, toUpdateChoices}
+const toUpdateBookInput = async (bookId)=>{
+    const {book, author, editorial, categories, isbn, purchasedOn} = await getOneBook(bookId);
+    
+    const question = [
+        {
+            type:"input",
+            name:"book",
+            message:"Insert a new book's name...", 
+            default(){
+                return book
+            }
+        },
+        {
+            type:"input",
+            name:"author",
+            message:"Insert a new author's name...", 
+            default(){
+                return author
+            }
+        },
+        {
+            type:"input",
+            name:"editorial",
+            message:"Insert a new editorial's name...", 
+            default(){
+                return editorial
+            }
+        },
+        {
+            type:"input",
+            name:"categories",
+            message:"Insert a new categories name...", 
+            default(){
+                return categories
+            }
+        },
+        {
+            type:"input",
+            name:"isbn",
+            message:"Insert a new isbn's name...", 
+            default(){
+                return isbn
+            }
+        },
+        {
+            type:"input",
+            name:"purchasedOn",
+            message:"Insert a new purchasedOn's name...", 
+            default(){
+                return purchasedOn
+            }
+        }
+    ]
+
+    return await inquirer.prompt(question);
+}
+
+export{getChoice, insertBookChoice, getPage, getSettings, toDeleteChoices, toUpdateBookChoice, toUpdateBookInput}

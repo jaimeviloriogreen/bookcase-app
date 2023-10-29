@@ -22,6 +22,33 @@ const getBooks = (sortby, orderby, len, posts)=>{
         db.close();
     }); 
 }
+
+const getOneBook = (bookId)=>{
+    return new Promise((resolve, reject)=>{
+        const db = new sqlite3.Database("./src/database/bookcase.db");
+        const sql =`
+            SELECT
+                books.name AS book,
+                authors.name AS author,
+                editorials.name AS editorial,
+                categories.name AS categories,
+                isbn,
+                purchasedOn
+            FROM books
+                INNER JOIN authors ON books.author = authors.id
+                INNER JOIN editorials ON books.editorial = editorials.id
+                INNER JOIN categories ON books.category = categories.id
+                WHERE books.id = ?`;
+        
+        db.get(sql, [ bookId ], (err, row)=>{
+            if( err ) return reject(err.message);
+            resolve(row);
+        });
+
+        db.close();
+    });
+}
+
 const insertBook = (name, authors, editorial, categories, isbn, purchasedOn)=>{
     return new Promise((resolve, reject)=>{
         
@@ -236,5 +263,6 @@ export{
     getBooksToActions,
     createDB,
     createTable,
-    deleteBooks
+    deleteBooks,
+    getOneBook
 }
