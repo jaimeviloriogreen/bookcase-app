@@ -8,7 +8,7 @@ DROP TABLE categories;
 CREATE TABLE IF NOT EXISTS
     categories(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
+        name TEXT NOT NULL UNIQUE 
     );
 # Delete table Authors if exist 
 DROP TABLE authors;
@@ -16,7 +16,7 @@ DROP TABLE authors;
 CREATE TABLE IF NOT EXISTS
     authors(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
+        name TEXT NOT NULL UNIQUE
     );
 # Delete table Editorials if exist 
 DROP TABLE editorials;
@@ -24,10 +24,10 @@ DROP TABLE editorials;
 CREATE TABLE IF NOT EXISTS
     editorials(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
+        name TEXT NOT NULL UNIQUE
     );
 # Delete table settings if exist
-DROP TABLE editorials;
+DROP TABLE settings;
 #Create table settings 
 CREATE TABLE IF NOT EXISTS
     settings(
@@ -42,8 +42,8 @@ DROP TABLE books;
 CREATE TABLE IF NOT EXISTS
     books(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        isbn TEXT NOT NULL,
+        name TEXT NOT NULL UNIQUE,
+        isbn TEXT NOT NULL UNIQUE,
         purchasedOn TEXT NOT NULL,
         category INTEGER REFERENCES categories(id) 
             ON UPDATE CASCADE
@@ -68,7 +68,63 @@ VALUES(?, ?, ?,
 SELECT
     books.name AS book,
     authors.name AS author,
-    categories.name AS categories
+    categories.name AS categories,
+    editorials.name AS editorial,
+    isbn, purchasedOn 
 FROM books
     INNER JOIN authors ON books.author = authors.id
-    INNER JOIN categories ON books.category = categories.id;
+    INNER JOIN categories ON books.category = categories.id
+    INNER JOIN editorials ON books.editorial = editorials.id
+WHERE books.id = 1;
+
+-- SQLITE no soporta UPDATE INNER JOIN
+-- UPDATE books
+--     INNER JOIN authors ON books.author = authors.id
+--     INNER JOIN editorials ON books.editorial = editorials.id 
+--     INNER JOIN categories ON books.category = categories.id
+-- SET
+--     books.name = 'Pedagogía General',
+--     authors.name = 'Ricardo Nassif',
+--     editorials.name = 'Pedagogía',
+--     categories.name = 'Kaperlusz',
+--     books.isbn = '950-13-3450-3',
+--     books.purchasedOn = '9/6/2016'
+-- WHERE books.id = 2;
+
+
+-- UPDATE book name, isbn and purchasedOn 
+UPDATE books SET 
+    name = '', 
+    isbn = '',
+    purchasedOn = '',
+    category = '',
+    author = '',
+    editorial = ''
+WHERE id = '';
+
+-- UPDATE book categories 
+UPDATE categories
+SET name = ''
+WHERE id = (
+        SELECT category
+        FROM books
+        WHERE id = ''
+    );
+
+-- UPDATE book author
+UPDATE authors
+SET name = ''
+WHERE id = (
+        SELECT author
+        FROM books
+        WHERE id = ''
+    );
+
+-- UPDATE book editorial
+UPDATE editorials
+SET name = ''
+WHERE id = (
+        SELECT editorial
+        FROM books
+        WHERE id = ''
+    );

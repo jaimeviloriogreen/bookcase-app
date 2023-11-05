@@ -80,8 +80,10 @@ async function main(){
                         const { bookId, confirm } = await toUpdateBookChoice();
                         
                         if(confirm){
-                            const res = await toUpdateBookInput(bookId);
-                            console.log(res);
+                            const bookToUpdate = await toUpdateBookInput(bookId);
+                            
+                    
+                            console.log({bookToUpdate});
                         }else{
 
                             advise("Book have not been updated!", "yellow");

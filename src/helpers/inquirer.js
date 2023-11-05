@@ -254,7 +254,7 @@ const toUpdateBookChoice = async ()=>{
 }
 
 const toUpdateBookInput = async (bookId)=>{
-    const {book, author, editorial, categories, isbn, purchasedOn} = await getOneBook(bookId);
+    const { book, author, editorial, categories, isbn, purchasedOn } = await getOneBook(bookId);
     
     const question = [
         {

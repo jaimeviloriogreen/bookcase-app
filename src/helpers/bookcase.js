@@ -9,10 +9,12 @@ const getBooks = (sortby, orderby, len, posts)=>{
                     books.name AS book,
                     authors.name AS author,
                     categories.name AS categories,
+                    editorials.name AS editorials,
                     purchasedOn
                 FROM books
                     INNER JOIN authors ON books.author = authors.id
                     INNER JOIN categories ON books.category = categories.id
+                    INNER JOIN editorials ON books.editorial = editorials.id
                     ORDER BY ${ orderby } ${ sortby } LIMIT ${ len - posts } OFFSET ${ posts }`;
         db.all(sql, (err, rows)=>{
             if( err ) return reject(err.message);
