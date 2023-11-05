@@ -94,12 +94,7 @@ WHERE books.id = 1;
 
 -- UPDATE book name, isbn and purchasedOn 
 UPDATE books SET 
-    name = '', 
-    isbn = '',
-    purchasedOn = '',
-    category = '',
-    author = '',
-    editorial = ''
+    category = SELECT EXISTS(SELECT id FROM categories WHERE name = 'Historia')
 WHERE id = '';
 
 -- UPDATE book categories 
