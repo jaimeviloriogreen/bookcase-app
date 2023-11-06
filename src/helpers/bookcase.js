@@ -270,9 +270,9 @@ const updateOneBook = async({book, author, editorial, categories, isbn, purchase
         categoryBook:"UPDATE books SET category = ? WHERE id = ?",
         authorBook:"UPDATE books SET author = ? WHERE id = ?",
         editorialBook:"UPDATE books SET editorial = ? WHERE id = ?",
-        categoryTable:"UPDATE categories SET name = ? WHERE id = ( SELECT category FROM books WHERE id = ? );",
-        authorTable:"UPDATE authors SET name = ? WHERE id = ( SELECT author FROM books WHERE id = ? );",
-        editorialTable:"UPDATE editorials SET name = ? WHERE id = ( SELECT editorial FROM books WHERE id = ? );"
+        categoriesTable:"INSERT INTO categories(name) VALUES(?)",
+        authorsTable:"INSERT INTO authors(name) VALUES(?)",
+        editorialsTable:"INSERT INTO editorials(name) VALUES(?)",
     }
     db.serialize(()=>{
         db.run(sql.book, [ book, bookId ], (err)=>{ if( err ) return err;});
@@ -287,20 +287,25 @@ const updateOneBook = async({book, author, editorial, categories, isbn, purchase
                 const { id } = row;
                 db.run(sql.categoryBook, [id, bookId],()=>{ if( err ) return err;})
             }else{
-                db.run(sql.categoryTable, [categories, bookId],()=>{ if( err ) return err;})
+                db.run(sql.categoriesTable,[categories], function(err){
+                    if( err ) return err;
+                    db.run(sql.categoryBook, [this.lastID, bookId],()=>{ if( err ) return err;})
+                })
             }
         });
         //? Author
          db.get(sql.authorId, [author], (err, row)=>{
             if( err ) return err;
-            if(row){
+            if(row){ // If author exist
                 const { id } = row;
                 db.run(sql.authorBook, [id, bookId],()=>{ if( err ) return err;})
             }else{
-                db.run(sql.authorTable, [author, bookId],()=>{ if( err ) return err;})
+                 db.run(sql.authorsTable,[author], function(err){
+                    if( err ) return err;
+                    db.run(sql.authorBook, [this.lastID, bookId],()=>{ if( err ) return err;})
+                })
             }
         });
-
         //? Editorial
          db.get(sql.editorialId, [editorial], (err, row)=>{
             if( err ) return err;
@@ -309,7 +314,10 @@ const updateOneBook = async({book, author, editorial, categories, isbn, purchase
                 const { id } = row;
                 db.run(sql.editorialBook, [id, bookId],()=>{ if( err ) return err;})
             }else{
-                db.run(sql.editorialTable, [editorial, bookId],()=>{ if( err ) return err;})
+                 db.run(sql.editorialsTable,[editorial], function(err){
+                    if( err ) return err;
+                    db.run(sql.editorialBook, [this.lastID, bookId],()=>{ if( err ) return err;})
+                })
             }
         });
     });
