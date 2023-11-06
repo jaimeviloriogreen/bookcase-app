@@ -295,14 +295,22 @@ const toUpdateBookInput = async (bookId)=>{
         {
             type:"input",
             name:"purchasedOn",
-            message:"Insert a new purchasedOn's name...", 
+            message:"Insert a new date...", 
             default(){
-                return purchasedOn
+                return purchasedOn;
             },
             validate(value){
                return validateDate(value);
             }
-        }
+        },
+         {
+            type:"confirm", 
+            name:"confirm",
+            message:"Do you want to update and save this?".green,
+            default(){
+                return true;
+            }
+        },
     ]
 
     return await inquirer.prompt(question);

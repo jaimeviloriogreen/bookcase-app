@@ -98,13 +98,7 @@ UPDATE books SET
 WHERE id = '';
 
 -- UPDATE book categories 
-UPDATE categories
-SET name = ''
-WHERE id = (
-        SELECT category
-        FROM books
-        WHERE id = ''
-    );
+UPDATE categories SET name = '' WHERE id = ( SELECT category FROM books WHERE id = '' );
 
 -- UPDATE book author
 UPDATE authors

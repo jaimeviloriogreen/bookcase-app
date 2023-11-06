@@ -81,12 +81,17 @@ async function main(){
                         const { bookId, confirm } = await toUpdateBookChoice();
                         
                         if(confirm){
-                            const bookToUpdate = await toUpdateBookInput(bookId);
-                            const updated = await updateOneBook(bookToUpdate, bookId);
+                            const { confirm,  ...bookToUpdate} = await toUpdateBookInput(bookId);
                             
+                            if(!confirm){
+                                advise("Book have not been updated!", "yellow");
+                            }else{
+                                await updateOneBook(bookToUpdate, bookId);
+                                advise("One book have been updated!", "green")
+                            }
                         }else{
 
-                            advise("Book have not been updated!", "yellow");
+                            advise("Update cancell!", "yellow");
                         }
 
                     } catch (err) {
