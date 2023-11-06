@@ -260,8 +260,7 @@ const updateOneBook = async({book, author, editorial, categories, isbn, purchase
     const sql = {
         book:"UPDATE books SET name = ? WHERE id = ?",
         isbn:"UPDATE books SET isbn = ? WHERE id = ?",
-        purchased:"UPDATE books SET purchasedOn = ? WHERE id = ?",
-        authorId:"SELECT id FROM authors WHERE name = ?"
+        purchased:"UPDATE books SET purchasedOn = ? WHERE id = ?"
     }
     db.serialize(()=>{
         db.run(sql.book, [ book, bookId ], (err)=>{ if( err ) return reject(err);});
