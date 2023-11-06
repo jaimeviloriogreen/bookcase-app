@@ -243,6 +243,9 @@ const toUpdateBookInput = async (bookId)=>{
             message:"Insert a new book's name...", 
             default(){
                 return book
+            },
+            validate(value){
+               return validateName(value);
             }
         },
         {
@@ -251,6 +254,9 @@ const toUpdateBookInput = async (bookId)=>{
             message:"Insert a new author's name...", 
             default(){
                 return author
+            },
+            validate(value){
+                return validateAuthor(value);
             }
         },
         {
@@ -259,6 +265,9 @@ const toUpdateBookInput = async (bookId)=>{
             message:"Insert a new editorial's name...", 
             default(){
                 return editorial
+            },
+            validate(value){
+                return validateEditorial(value);
             }
         },
         {
@@ -267,6 +276,9 @@ const toUpdateBookInput = async (bookId)=>{
             message:"Insert a new categories name...", 
             default(){
                 return categories
+            },
+            validate(value){
+                return validateCategory(value);
             }
         },
         {
@@ -275,6 +287,9 @@ const toUpdateBookInput = async (bookId)=>{
             message:"Insert a new isbn's name...", 
             default(){
                 return isbn
+            },
+            validate(value){
+                return validateIsbn(value);
             }
         },
         {
@@ -283,6 +298,9 @@ const toUpdateBookInput = async (bookId)=>{
             message:"Insert a new purchasedOn's name...", 
             default(){
                 return purchasedOn
+            },
+            validate(value){
+               return validateDate(value);
             }
         }
     ]
