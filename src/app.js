@@ -9,7 +9,8 @@ import {
     getSets, 
     updateSettings,
     createDB,
-    createTable
+    createTable, 
+    updateOneBook
 } from "./helpers/bookcase.js";
 import {
     getChoice, 
@@ -81,9 +82,8 @@ async function main(){
                         
                         if(confirm){
                             const bookToUpdate = await toUpdateBookInput(bookId);
+                            const updated = await updateOneBook(bookToUpdate, bookId);
                             
-                    
-                            console.log({bookToUpdate});
                         }else{
 
                             advise("Book have not been updated!", "yellow");

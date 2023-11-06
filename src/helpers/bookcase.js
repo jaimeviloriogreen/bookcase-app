@@ -24,7 +24,6 @@ const getBooks = (sortby, orderby, len, posts)=>{
         db.close();
     }); 
 }
-
 const getOneBook = (bookId)=>{
     return new Promise((resolve, reject)=>{
         const db = new sqlite3.Database("./src/database/bookcase.db");
@@ -50,7 +49,6 @@ const getOneBook = (bookId)=>{
         db.close();
     });
 }
-
 const insertBook = (name, authors, editorial, categories, isbn, purchasedOn)=>{
     return new Promise((resolve, reject)=>{
         
@@ -256,6 +254,22 @@ const deleteBooks = (ids=[])=>{
     });
 };
 
+const updateOneBook = async({book, author, editorial, categories, isbn, purchasedOn}, bookId)=>{
+    const db = new sqlite3.Database("./src/database/bookcase.db");
+
+    const sql = {
+        book:"UPDATE books SET name = ? WHERE id = ?",
+        isbn:"UPDATE books SET isbn = ? WHERE id = ?",
+        purchased:"UPDATE books SET purchasedOn = ? WHERE id = ?",
+        authorId:"SELECT id FROM authors WHERE name = ?"
+    }
+    db.serialize(()=>{
+        db.run(sql.book, [ book, bookId ], (err)=>{ if( err ) return reject(err);});
+        db.run(sql.isbn, [ isbn, bookId ], (err)=>{ if( err ) return reject(err);});
+        db.run(sql.purchased, [ purchasedOn, bookId ], (err)=>{ if( err ) return reject(err);});
+    });
+}
+
 export{
     getBooks,
     insertBook,
@@ -266,5 +280,6 @@ export{
     createDB,
     createTable,
     deleteBooks,
-    getOneBook
+    getOneBook, 
+    updateOneBook
 }

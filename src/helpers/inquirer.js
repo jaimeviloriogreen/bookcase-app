@@ -1,6 +1,14 @@
 import inquirer from "inquirer";
 import setPostByPages from "../modules/pages.js";
 import { getBooksToActions, getOneBook } from "./bookcase.js";
+import { 
+    validateName, 
+    validateAuthor, 
+    validateEditorial, 
+    validateCategory,
+    validateIsbn, 
+    validateDate 
+} from "./validates.js";
 
 import "colors";
 const getChoice = async ()=>{
@@ -30,11 +38,7 @@ const insertBookChoice = async ()=>{
             name:"name",
             message:"Insert the book's name...",
             validate(value){
-                const regex = new RegExp("^([a-zA-ZÀ-ÿ0-9]{2,}[,]?)(\\s[a-zA-ZÀ-ÿ0-9]+[,]?)*$", "g");
-                if(regex.test(value)){
-                    return true;
-                }
-                return "Please, enter a validate value!"
+               return validateName(value);
             }
         },
         {
@@ -42,11 +46,7 @@ const insertBookChoice = async ()=>{
             name:"authors",
             message:"Insert one o more book's authors (separated by commas and spaces)...",
             validate(value){
-                const regex = new RegExp("^([a-zA-ZÀ-ÿ.]{2,}[,]?)(\\s[a-zA-ZÀ-ÿ.]+[,]?)*$", "g");
-                if(regex.test(value)){
-                    return true;
-                }
-                return "Please, enter a validate value!"
+                return validateAuthor(value);
             }
         },
 
@@ -55,11 +55,7 @@ const insertBookChoice = async ()=>{
             name:"editorial",
             message:"Insert the book's editorial...",
             validate(value){
-                const regex = new RegExp("^([a-zA-ZÀ-ÿ&]{2,})(\\s[a-zA-ZÀ-ÿ]+)*$", "g");
-                if(regex.test(value)){
-                    return true;
-                }
-                return "Please, enter a validate value!"
+                return validateEditorial(value);
             }
         },
         {
@@ -67,11 +63,7 @@ const insertBookChoice = async ()=>{
             name:"categories",
             message:"Insert one o more book categories (separated by commas and spaces)...",
             validate(value){
-                const regex = new RegExp("^([a-zA-ZÀ-ÿ]{2,}[,]?)(\\s[a-zA-ZÀ-ÿ]+[,]?)*$", "g");
-                if(regex.test(value)){
-                    return true;
-                }
-                return "Please, enter a validate value!"
+                return validateCategory(value);
             }
         },
         {
@@ -79,11 +71,7 @@ const insertBookChoice = async ()=>{
             name:"isbn",
             message:"Insert the book's ISBN...",
             validate(value){
-                const regex = new RegExp("^([0-9\\-]+)([0-9]+)$", "g");
-                if(regex.test(value)){
-                    return true;
-                }
-                return "Please, enter a validate ISBN!"
+                return validateIsbn(value);
             }
         },
         {
@@ -94,15 +82,7 @@ const insertBookChoice = async ()=>{
                 return "year/month/day";
             },
             validate(value){
-                const regex = new RegExp("^[0-9]{4}[/]{1}[0-9]{1,2}[/]{1}[0-9]{1,2}$", "g");
-                const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
-                const date = new Date(value).toLocaleDateString('es-DO', options);
-
-                if(regex.test(value) && date !== "Invalid Date"){
-                    return true;
-                }
-
-                return "Please, enter a validate date!"
+               return validateDate(value);
             }
         },
         {
