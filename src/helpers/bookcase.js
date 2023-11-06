@@ -191,21 +191,24 @@ const createTable = async ()=>{
         `;
         const booksTableSQL = `
         CREATE TABLE IF NOT EXISTS
-        books(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE,
-            isbn TEXT NOT NULL UNIQUE,
-            purchasedOn TEXT NOT NULL,
-            category INTEGER REFERENCES categories(id) 
-                ON UPDATE CASCADE
-                ON DELETE CASCADE,
-            author INTEGER REFERENCES authors(id)
-                ON UPDATE CASCADE
-                ON DELETE CASCADE,
-            editorial INTEGER REFERENCES editorials(id)
-                ON UPDATE CASCADE
-                ON DELETE CASCADE
-        );
+            books(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                isbn TEXT NOT NULL UNIQUE,
+                purchasedOn TEXT NOT NULL,
+                category INTEGER NOT NULL,
+                author INTEGER NOT NULL,
+                editorial INTEGER NOT NULL, 
+                FOREIGN KEY (category) REFERENCES categories(id) 
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (author) REFERENCES authors(id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE,
+                FOREIGN KEY (editorial) REFERENCES editorials(id)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
+            );
         `;
 
         db.serialize(()=>{
