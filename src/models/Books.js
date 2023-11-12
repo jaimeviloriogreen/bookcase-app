@@ -5,6 +5,6 @@ export default class Books{
         this.categories = categories;
         this.editorial = editorial;
         this.isbn = isbn;
-        this.purchasedOn = new Date(date).toLocaleDateString('es-DO');
+        this.purchasedOn = date;
     }
 }
