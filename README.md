@@ -15,7 +15,7 @@ pnpm install
 pnpm start
 ```
 ### Stack of technologies
-Developed with Node.js using these modules:
+Developed with Node.js 18+ using these modules:
 
 - [SQLite3](https://www.npmjs.com/package/sqlite3)
 - [Inquirer](https://www.npmjs.com/package/inquirer)
