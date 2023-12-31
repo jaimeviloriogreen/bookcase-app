@@ -1,3 +1,4 @@
+import { mkdir } from 'node:fs';
 import sqlite3 from "sqlite3";
 
 const getBooks = (sortby, orderby, len, posts)=>{
@@ -145,7 +146,14 @@ const getBooksToActions = ()=>{
         db.close();
     }); 
 }
+const createDBFolder = ()=>{
+    mkdir('./src/database', { recursive: true }, (err) => {
+        if (err) throw err;
+    }); 
+}
 const createDB = ()=>{
+    createDBFolder();
+    
     return new Promise((resolve, reject)=>{
         const path = "./src/database/bookcase.db";
 
