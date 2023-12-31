@@ -1,4 +1,4 @@
 node_modules
 .DS_Store
-src/database/*.db
-src/database/*.sqlite3
+*.sh
+database/
